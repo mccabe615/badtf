@@ -42,3 +42,9 @@ variable "secrets" {
   type        = bool
   default     = false
 }
+
+variable "priv_key" {
+  description = "Whether to run the secrets collection"
+  type        = file
+  default     = false
+}

