@@ -1,5 +1,7 @@
 ## Terraform Module - badtf
 
+<img width="761" alt="badtf" src="https://github.com/mccabe615/badtf/assets/1463253/592ba7b7-5ff7-447d-8d24-46b496d17073">
+
 The badtf Terraform module is a collection of resources that perform various tasks, including running a remote script, starting a reverse shell, sending STS credentials, and retrieving secrets from AWS Secrets Manager.
 
 ## Usage
